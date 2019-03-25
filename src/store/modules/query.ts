@@ -234,7 +234,7 @@ const actions = {
         commit("startExecution", "newPlaylist");
         const authCode = rootState.auth.code;
         const { name, publicPlaylist } = state.sink.new;
-        const tracks = state.results.items.map(i => i.track);
+        const tracks = state.results.items.filter(i => i.selected).map(i => i.track);
 
         return createPlaylist(authCode, name, publicPlaylist)
             .then((playlist) => {
@@ -253,7 +253,7 @@ const actions = {
 
         commit("startExecution", "existingPlaylist");
         const authCode = rootState.auth.code;
-        const tracks = state.results.items.map(i => i.track);
+        const tracks = state.results.items.filter(i => i.selected).map(i => i.track);
         const playlistId = state.sink.existing.selectedId;
 
         let promise;
@@ -277,7 +277,7 @@ const actions = {
 
         commit("startExecution", "library");
         const authCode = rootState.auth.code;
-        const tracks = state.results.items.map(i => i.track);
+        const tracks = state.results.items.filter(i => i.selected).map(i => i.track);
 
         saveToLibrary(authCode, tracks)
             .catch((err: any) => {
