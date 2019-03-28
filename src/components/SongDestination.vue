@@ -5,49 +5,37 @@
     </div>
     <b-row class="mt-3">
       <b-col>
-        <b-card
-          title="Library"
-          sub-title="Save the selected songs to your library."
-        >
-          <b-button
-            variant="success"
+        <b-card title="Library" sub-title="Save the selected songs to your library.">
+          <ActionButton
             class="float-right"
-            :disabled="!canSaveToLibrary"
+            variant="success"
+            iconSide="right"
+            icon="fa-arrow-alt-circle-right"
             @click="executeSaveToLibrary()"
-            >Save <i class="fas ml-1" :class="executeSaveLibraryButtonClass"></i
-          ></b-button>
+            :canExecute="canSaveToLibrary"
+            :executing="executing == 'library'"
+          >Save</ActionButton>
         </b-card>
       </b-col>
     </b-row>
     <b-row class="mt-3">
       <b-col>
-        <b-card
-          title="New Playlist"
-          sub-title="Save the selected songs to a new playlist."
-        >
-          <b-form-input
-            type="text"
-            v-model="name"
-            placeholder="Playlist Name"
-          />
+        <b-card title="New Playlist" sub-title="Save the selected songs to a new playlist.">
+          <b-form-input type="text" v-model="name" placeholder="Playlist Name"/>
           <div class="row">
             <div class="col-6">
-              <b-form-checkbox v-model="publicPlaylist" class="mt-2 ml-2"
-                >Public</b-form-checkbox
-              >
+              <b-form-checkbox v-model="publicPlaylist" class="mt-2 ml-2">Public</b-form-checkbox>
             </div>
             <div class="col-6">
-              <b-button
-                variant="success"
+              <ActionButton
                 class="float-right mt-2"
-                :disabled="!canSaveToNewPlaylist"
+                variant="success"
+                iconSide="right"
+                icon="fa-arrow-alt-circle-right"
                 @click="executeSaveToNewPlaylist()"
-                >Save
-                <i
-                  class="fas ml-1"
-                  :class="executeSaveNewPlaylistButtonClass"
-                ></i
-              ></b-button>
+                :canExecute="canSaveToNewPlaylist"
+                :executing="executing == 'newPlaylist'"
+              >Save</ActionButton>
             </div>
           </div>
         </b-card>
@@ -59,19 +47,17 @@
           title="Existing Playlist"
           sub-title="Save the selected songs to a existing playlist."
         >
-          <b-form-select v-model="selectedId" :options="playlistOptions" />
+          <b-form-select v-model="selectedId" :options="playlistOptions"/>
           <div class="row align-items-center no-gutters">
             <div class="col-4">
-              <b-button
-                variant="info"
+              <ActionButton
                 class="mt-2"
+                variant="info"
+                icon="fa-sync"
+                iconExecuting="fa-sync"
                 @click="executeSelectResults()"
-                ><i
-                  class="fas fa-sync mr-1"
-                  :class="executeRefreshPlaylistButtonClass"
-                ></i>
-                Refresh Playlists</b-button
-              >
+                :executing="executing == 'select'"
+              >Refresh Playlists</ActionButton>
             </div>
             <div class="col-4 text-center">
               <b-form-group class="mt-2">
@@ -82,17 +68,15 @@
               </b-form-group>
             </div>
             <div class="col-4">
-              <b-button
-                variant="success"
+              <ActionButton
                 class="float-right mt-2"
-                :disabled="!canSaveToExistingPlaylist"
+                variant="success"
+                iconSide="right"
+                icon="fa-arrow-alt-circle-right"
                 @click="executeSaveToExistingPlaylist()"
-                >Save
-                <i
-                  class="fas ml-1"
-                  :class="executeSaveExistingPlaylistButtonClass"
-                ></i
-              ></b-button>
+                :canExecute="canSaveToExistingPlaylist"
+                :executing="executing == 'existingPlaylist'"
+              >Save</ActionButton>
             </div>
           </div>
         </b-card>
@@ -104,6 +88,7 @@
 <script lang="ts">
 import Vue from "vue";
 import MultiInputLines from "@/components/MultiInputLines.vue";
+import ActionButton from "@/components/shared/ActionButton.vue";
 
 import { createHelpers } from "vuex-map-fields";
 import { mapActions, mapGetters } from "vuex";
@@ -115,7 +100,7 @@ const { mapFields, mapMultiRowFields } = createHelpers({
 
 export default Vue.extend({
   name: "song-destination",
-  components: { MultiInputLines },
+  components: { MultiInputLines, ActionButton },
   data() {
     return {};
   },
@@ -139,36 +124,6 @@ export default Vue.extend({
         text: p.name
       }));
     },
-    executeSaveLibraryButtonClass(): any {
-      const executing = (this as any).executing === "library";
-      return {
-        "fa-arrow-alt-circle-right": !executing,
-        "fa-spin": executing,
-        "fa-spinner": executing
-      };
-    },
-    executeSaveNewPlaylistButtonClass(): any {
-      const executing = (this as any).executing === "newPlaylist";
-      return {
-        "fa-arrow-alt-circle-right": !executing,
-        "fa-spin": executing,
-        "fa-spinner": executing
-      };
-    },
-    executeSaveExistingPlaylistButtonClass(): any {
-      const executing = (this as any).executing === "existingPlaylist";
-      return {
-        "fa-arrow-alt-circle-right": !executing,
-        "fa-spin": executing,
-        "fa-spinner": executing
-      };
-    },
-    executeRefreshPlaylistButtonClass(): any {
-      const executing = (this as any).executing === "select";
-      return {
-        "fa-spin": executing
-      };
-    }
   },
   methods: {
     ...mapActions("query", [

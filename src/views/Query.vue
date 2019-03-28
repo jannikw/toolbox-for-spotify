@@ -15,15 +15,15 @@
       <query-settings/>
       <div class="row">
         <div class="col">
-          <b-button
+          <ActionButton
             class="float-right mt-3"
             variant="success"
+            iconSide="right"
+            icon="fa-arrow-alt-circle-right"
             @click="executeQuery()"
-            :disabled="!canExecuteQuery"
-          >
-            Show Results
-            <i class="fas ml-2" :class="executeQueryButtonClass"></i>
-          </b-button>
+            :canExecute="canExecuteQuery"
+            :executing="executing == 'query'"
+          >Show Results</ActionButton>
         </div>
       </div>
     </template>
@@ -34,15 +34,15 @@
           <b-button class="mt-3" variant="secondary" @click="display = 'settings'">
             <i class="fas fa-arrow-alt-circle-left mr-2"></i> Edit Query
           </b-button>
-          <b-button
+          <ActionButton
             class="float-right mt-3"
             variant="success"
+            iconSide="right"
+            icon="fa-arrow-alt-circle-right"
             @click="executeSelectResults()"
-            :disabled="!canSaveResults"
-          >
-            Save Results
-            <i class="fas ml-2" :class="executeSelectButtonClass"></i>
-          </b-button>
+            :canExecute="canSaveResults"
+            :executing="executing == 'select'"
+          >Save Results</ActionButton>
         </div>
       </div>
     </template>
@@ -64,6 +64,7 @@ import Vue from "vue";
 import QuerySettings from "@/components/QuerySettings.vue";
 import QueryResults from "@/components/QueryResults.vue";
 import SongDestination from "@/components/SongDestination.vue";
+import ActionButton from "@/components/shared/ActionButton.vue";
 
 import * as query from "../toolbox/query";
 
@@ -77,29 +78,13 @@ const { mapFields, mapMultiRowFields } = createHelpers({
 
 export default Vue.extend({
   name: "query",
-  components: { QuerySettings, QueryResults, SongDestination },
+  components: { QuerySettings, QueryResults, SongDestination, ActionButton },
   data() {
     return {};
   },
   computed: {
     ...mapFields(["display", "executing", "error"]),
     ...mapGetters("query", ["canExecuteQuery", "canSaveResults"]),
-    executeQueryButtonClass(): any {
-      const executing = (this as any).executing === "query";
-      return {
-        "fa-arrow-alt-circle-right": !executing,
-        "fa-spin": executing,
-        "fa-spinner": executing
-      };
-    },
-    executeSelectButtonClass(): any {
-      const executing = (this as any).executing === "select";
-      return {
-        "fa-arrow-alt-circle-right": !executing,
-        "fa-spin": executing,
-        "fa-spinner": executing
-      };
-    }
   },
   methods: {
     ...mapActions("query", [
